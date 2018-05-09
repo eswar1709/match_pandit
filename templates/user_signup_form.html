@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Sign up</h1>
+  <form method="post" id="pandit-form" url="{% url 'user-signup' %}">
+    {% csrf_token %}
+    {{form.errors}}
+    <div class="row">
+      <div class="col-md-12" >
+      <label class="radio-inline">
+          <input type="radio" name="optradio" value="user" checked="checked">User
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="optradio" value="pandit">Pandit
+        </label>
+        <div>
+          <label>Username:</label>
+          <input type="text" name="username" value="{{ form.username.value|default:'' }}" required />
+        </div>
+        <div>
+          <label>First name:</label>
+          <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" />
+        </div>
+        <div>
+          <label>Last name:</label>
+          <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" />
+        </div>
+        <div>
+          <label>Email:</label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}" />
+        </div>
+        <div>
+          <label>Contact:</label>
+          <input type="number" name="number" value="{{ form.contact.value|default:'' }}" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input type="password" name="password" value="{{ form.password.value|default:'' }}" />
+        </div>
+
+        <div>
+          <label>Confirm password</label>
+          <input type="password" name="password2" value="{{ form.password2.value|default:'' }}" />
+        </div>
+        <div>
+          <label>Location</label>
+
+          <input type="text" name="location_name" id="user-location" autocomplete="on" runat="server">
+        </div>
+
+        <input type="text" name="lat" class="hide" id="user-lat">
+        <input type="text" name="lng" class="hide" id="user-lng">
+        <div id="id_locations_block" style="padding-left: 10px">
+            <!-- BEGIN SAMPLE TABLE PORTLET-->
+
+            <div class="portlet-body">
+                <div class="portlet box green" style="display:none">
+
+                    <table class="table table-bordered table-striped table-condensed flip-content">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <ul id="id_locations_key" name='location_values'></ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-scrollable">
+                    <table id="id_locations_table" >
+                    <thead>
+                    <tr>
+                        <th>
+
+                        </th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <!-- END SAMPLE TABLE PORTLET-->
+        </div>
+         <input type="submit" name="submit" value="Register" />
+      </div>
+    </div>
+  </form>
+
+{% endblock %}
+
+{% block js %}
+  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCgVF9HPSwc6iHXpQXfEXGzpqakcmo8JnQ" type="text/javascript"></script>
+
+  <script type="text/javascript">
+
+    function initialize() {
+      location_values = []
+      location_key_values = []
+      var input = document.getElementById('user-location');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      google.maps.event.addListener(autocomplete, 'place_changed', function (e) {
+          var place = autocomplete.getPlace();
+          document.getElementById('user-location').value = place.name;
+          document.getElementById('user-lat').value = place.geometry.location.lat();
+          document.getElementById('user-lng').value = place.geometry.location.lng();
+          var type = $('input[name="optradio"]:checked').val();
+          if (type === 'pandit'){
+            $('#id_locations_table').find('tbody').append($('<tr>')
+                .append('<td class="highlight">' + place.name + '</td>'))
+          location_values.push(place.name)
+
+          $("#id_locations_key").append('<li>'+place.name+'&&'+'</li>');
+            location_key_values.push(place.name)
+
+          }
+          else{
+
+            $('#id_locations_table').hide()
+          }
+
+
+      });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<script type="text/javascript">
+$('#pandit-form').submit(function(eventObj) {
+    $(this).append("<input type='hidden' name='location_values' value='" + location_values + "'/>");
+    return true;
+});
+
+  </script>
+{% endblock%}

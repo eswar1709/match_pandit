@@ -1,0 +1,27 @@
+<div class="row">
+  {% if pandits %}
+  <div class="col-sm-4 col-offset-4">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pandit in pandits %}
+            <tr>
+                <td>{{pandit.user.get_full_name}}</td>
+                <td>{{pandit.contact}}</td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+  </div>
+  {% else %}
+    <p>No Pandits in your location.</p>
+  {% endif %}
+</div>

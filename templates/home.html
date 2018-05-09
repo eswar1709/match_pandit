@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.panditprofile_set.all %}
+
+  <h3>pandit profile</h3>
+{% else%}
+<button id="match" data-id={{user.userprofile_set.first.id}}>match pandit</button><br><br>
+<div id="pandits_result"></div>
+{% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            $('#match').on('click', function () {
+                var user_id = $(this).data('id')
+
+                 $.ajax({
+                  url: '/match/'+user_id+'/pandit/',
+                  type: "GET",
+                  success: function(res){
+                    if(res.error) {
+                      console.log(res.error);
+                    }
+                    else{
+                      $("#pandits_result").html(res);
+                    }
+                  }
+              });
+            });
+        });
+    </script>
+{% endblock %}
